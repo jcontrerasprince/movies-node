@@ -20,6 +20,7 @@ Una vez descargado, ejecutar con base de datos MS SQL a través de ORM Sequelize
 - Routes para Signup (registro), validación de clave segura, login (acceso), creación de películas y creación de tickets
 - No hay consultas o queries crudas para subir información, especialmente para usuarios debido a que estos se almacenan de forma encriptada e insertando esta data directamente en SQL generaría distorsión de la información
 - El manejo de imágenes se hace directamente en SQL a través de archivos BLOB, que luego se traducen en columnas VARBINARY en la base de datos
+- El trigger solicitado no se realizó en proyecto, se presenta a continuación en el quote siguiente
 
 ### Consultas que se usaron
 
@@ -43,4 +44,23 @@ delete from [Movies].[dbo].[tbUsers] where ident <> 1
 delete from [Movies].[dbo].[tbMovies] where ident > 5
 
 */
+```
+
+```
+```
+CREATE TRIGGER dbo.tgBackupMovies
+   ON  dbo.tbMovies
+   AFTER DELETE
+AS 
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for trigger here
+	INSERT INTO dbo.tbBackup (ident, title, picture, [desc], duration, genre, time, createdAt, updatedAt)
+	SELECT ident, title, picture, [desc], duration, genre, time, createdAt, updatedAt FROM deleted
+
+END
+GO
 ```
